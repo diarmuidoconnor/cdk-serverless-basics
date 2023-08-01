@@ -1,8 +1,8 @@
-import * as cdk from 'aws-cdk-lib';
-import * as lambdanode from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as cdk from "aws-cdk-lib";
+import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 
-import { Construct } from 'constructs';
+import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class SimpleAppStack extends cdk.Stack {
@@ -16,6 +16,15 @@ export class SimpleAppStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
     });
+
+    const simpleFnURL = simpleFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.AWS_IAM,
+      cors: {
+        allowedOrigins: ["*"],
+      },
+    });
+
+    new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
 
   }
 }
