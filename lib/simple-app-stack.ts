@@ -6,7 +6,7 @@ import * as custom from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { generateBatch } from "../shared/util";
-import {movies} from "../seed/movies";
+import { movies } from "../seed/movies";
 
 export class SimpleAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,7 +17,6 @@ export class SimpleAppStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_16_X,
       entry: `${__dirname}/../lambdas/simple.ts`,
       timeout: cdk.Duration.seconds(10),
-      memorySize: 128,
     });
 
     const simpleFnURL = simpleFn.addFunctionUrl({
@@ -50,7 +49,33 @@ export class SimpleAppStack extends cdk.Stack {
       }),
     });
 
-    new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
+    const getMovieByIdFn = new lambdanode.NodejsFunction(
+      this,
+      "GetMovieByIdFn",
+      {
+        architecture: lambda.Architecture.ARM_64,
+        runtime: lambda.Runtime.NODEJS_16_X,
+        entry: `${__dirname}/../lambdas/getMovieById.ts`,
+        timeout: cdk.Duration.seconds(10),
+        memorySize: 128,
+        environment: {
+          TABLE_NAME: moviesTable.tableName,
+          REGION: 'eu-west-1',
+        },
+      }
+    );
 
+    const getMovieByIdURL = getMovieByIdFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: ["*"],
+      },
+    });
+
+    moviesTable.grantReadData(getMovieByIdFn)
+
+    new cdk.CfnOutput(this, "Get Movie Function Url", { value: getMovieByIdURL.url });
+
+    new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
   }
 }
