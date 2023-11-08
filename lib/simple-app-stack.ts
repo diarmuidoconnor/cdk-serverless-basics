@@ -3,6 +3,8 @@ import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as custom from "aws-cdk-lib/custom-resources";
+import * as iam from "aws-cdk-lib/aws-iam";
+
 import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { generateBatch } from "../shared/util";
@@ -60,7 +62,7 @@ export class SimpleAppStack extends cdk.Stack {
         memorySize: 128,
         environment: {
           TABLE_NAME: moviesTable.tableName,
-          REGION: 'eu-west-1',
+          REGION: "eu-west-1",
         },
       }
     );
@@ -72,9 +74,30 @@ export class SimpleAppStack extends cdk.Stack {
       },
     });
 
-    moviesTable.grantReadData(getMovieByIdFn)
+    moviesTable.grantReadData(getMovieByIdFn);
 
-    new cdk.CfnOutput(this, "Get Movie Function Url", { value: getMovieByIdURL.url });
+    // getMovieByIdFn.addToRolePolicy(
+    //   new iam.PolicyStatement({
+    //     effect: iam.Effect.ALLOW,
+    //     resources: [
+    //       moviesTable.tableArn
+    //     ],
+    //     actions: [
+    //       "dynamodb:BatchGetItem",
+    //       "dynamodb:ConditionCheckItem",
+    //       "dynamodb:DescribeTable",
+    //       "dynamodb:GetItem",
+    //       "dynamodb:GetRecords",
+    //       "dynamodb:GetShardIterator",
+    //       "dynamodb:Query",
+    //       "dynamodb:Scan",
+    //     ],
+    //   })
+    // );
+
+    new cdk.CfnOutput(this, "Get Movie Function Url", {
+      value: getMovieByIdURL.url,
+    });
 
     new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
   }
