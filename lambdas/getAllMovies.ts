@@ -8,21 +8,8 @@ const ddbDocClient = createDDbDocClient();
 export const handler: Handler = async (event, context) => {
   try {
     // Print Event
-    console.log("Event: ", event);
+    console.log("Event: ", JSON.stringify(event));
 
-    // const marshallOptions = {
-    //   convertEmptyValues: true,
-    //   removeUndefinedValues: true,
-    //   convertClassInstanceToMap: true,
-    // };
-    // const unmarshallOptions = {
-    //   wrapNumbers: false,
-    // };
-    // const translateConfig = { marshallOptions, unmarshallOptions };
-    // const ddbDocClient = DynamoDBDocumentClient.from(
-    //   ddbClient,
-    //   translateConfig
-    // );
     const commandOutput = await ddbDocClient.send(
       new ScanCommand({
         TableName: process.env.TABLE_NAME,
@@ -75,3 +62,17 @@ function createDDbDocClient() {
   const translateConfig = { marshallOptions, unmarshallOptions };
   return DynamoDBDocumentClient.from(ddbClient, translateConfig);
 }
+
+// const marshallOptions = {
+//   convertEmptyValues: true,
+//   removeUndefinedValues: true,
+//   convertClassInstanceToMap: true,
+// };
+// const unmarshallOptions = {
+//   wrapNumbers: false,
+// };
+// const translateConfig = { marshallOptions, unmarshallOptions };
+// const ddbDocClient = DynamoDBDocumentClient.from(
+//   ddbClient,
+//   translateConfig
+// );

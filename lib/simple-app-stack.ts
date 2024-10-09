@@ -14,20 +14,6 @@ export class SimpleAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const simpleFn = new lambdanode.NodejsFunction(this, "SimpleFn", {
-      architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
-      entry: `${__dirname}/../lambdas/simple.ts`,
-      timeout: cdk.Duration.seconds(10),
-    });
-
-    const simpleFnURL = simpleFn.addFunctionUrl({
-      authType: lambda.FunctionUrlAuthType.AWS_IAM,
-      cors: {
-        allowedOrigins: ["*"],
-      },
-    });
-
     const moviesTable = new dynamodb.Table(this, "MoviesTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       partitionKey: { name: "movieId", type: dynamodb.AttributeType.NUMBER },
@@ -83,14 +69,14 @@ export class SimpleAppStack extends cdk.Stack {
     //       moviesTable.tableArn
     //     ],
     //     actions: [
-    //       "dynamodb:BatchGetItem",
-    //       "dynamodb:ConditionCheckItem",
-    //       "dynamodb:DescribeTable",
+    //       // "dynamodb:BatchGetItem",
+    //       // "dynamodb:ConditionCheckItem",
+    //       // "dynamodb:DescribeTable",
     //       "dynamodb:GetItem",
-    //       "dynamodb:GetRecords",
-    //       "dynamodb:GetShardIterator",
-    //       "dynamodb:Query",
-    //       "dynamodb:Scan",
+    //       // "dynamodb:GetRecords",
+    //       // "dynamodb:GetShardIterator",
+    //       // "dynamodb:Query",
+    //       // "dynamodb:Scan",
     //     ],
     //   })
     // );
@@ -99,6 +85,20 @@ export class SimpleAppStack extends cdk.Stack {
       value: getMovieByIdURL.url,
     });
 
-    new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
+    // new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
+
+    // const simpleFn = new lambdanode.NodejsFunction(this, "SimpleFn", {
+    //   architecture: lambda.Architecture.ARM_64,
+    //   runtime: lambda.Runtime.NODEJS_16_X,
+    //   entry: `${__dirname}/../lambdas/simple.ts`,
+    //   timeout: cdk.Duration.seconds(10),
+    // });
+
+    // const simpleFnURL = simpleFn.addFunctionUrl({
+    //   authType: lambda.FunctionUrlAuthType.AWS_IAM,
+    //   cors: {
+    //     allowedOrigins: ["*"],
+    //   },
+    // });
   }
 }

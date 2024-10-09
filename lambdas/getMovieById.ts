@@ -7,7 +7,7 @@ const ddbDocClient = createDDbDocClient();
 
 export const handler: Handler = async (event, context) => {
   try {
-    console.log("Event: ", event);
+    console.log("Event: ", JSON.stringify(event));
     const parameters = event?.queryStringParameters;
     const movieId = parameters ? parseInt(parameters.movieId) : undefined;
 
