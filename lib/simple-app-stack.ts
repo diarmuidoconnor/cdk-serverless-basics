@@ -11,7 +11,7 @@ export class SimpleAppStack extends cdk.Stack {
 
     const simpleFn = new lambdanode.NodejsFunction(this, "SimpleFn", {
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       entry: `${__dirname}/../lambdas/simple.ts`,
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
